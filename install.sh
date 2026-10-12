@@ -6,8 +6,8 @@ set -u
 REPO="$(cd "$(dirname "$0")" && pwd -P)"
 MODE=install
 [ "${1:-}" = --uninstall ] && MODE=uninstall
-BEGIN='<!-- dotfiles:begin -->'   # variants: "begin nl" (added a trailing newline), "begin new" (created the file)
-END='<!-- dotfiles:end -->'
+BEGIN='<!-- dotfiles-frontend-workflow:begin -->'   # variants: "begin nl" (added a trailing newline), "begin new" (created the file)
+END='<!-- dotfiles-frontend-workflow:end -->'
 WARN=0
 
 say() { echo "$1: $2"; }
@@ -29,12 +29,12 @@ unlink_one() {
 claude_add() {
   local f="$HOME/.claude/CLAUDE.md" tag=$BEGIN
   if [ -L "$f" ] && [ ! -e "$f" ]; then warn "$f is a dangling symlink, skipped"; return; fi
-  if [ -f "$f" ] && grep -q '^<!-- dotfiles:begin' "$f"; then say ok "$f"; return; fi
+  if [ -f "$f" ] && grep -q '^<!-- dotfiles-frontend-workflow:begin' "$f"; then say ok "$f"; return; fi
   if [ -e "$f" ] && [ ! -w "$f" ]; then warn "could not write $f"; return; fi
   if [ ! -e "$f" ]; then
-    tag='<!-- dotfiles:begin new -->'
+    tag='<!-- dotfiles-frontend-workflow:begin new -->'
   elif [ -s "$f" ] && [ -n "$(tail -c1 "$f")" ]; then
-    tag='<!-- dotfiles:begin nl -->'; printf '\n' >> "$f"
+    tag='<!-- dotfiles-frontend-workflow:begin nl -->'; printf '\n' >> "$f"
   fi
   if printf '%s\n@~/.claude/AGENTS.md\n%s\n' "$tag" "$END" >> "$f" 2>/dev/null; then say link "$f (import AGENTS.md)"; else warn "could not write $f"; fi
 }
@@ -42,14 +42,14 @@ claude_add() {
 claude_remove() {
   local f="$HOME/.claude/CLAUDE.md" tag tmp
   [ -f "$f" ] || return 0
-  tag=$(grep -m1 '^<!-- dotfiles:begin' "$f") || return 0
+  tag=$(grep -m1 '^<!-- dotfiles-frontend-workflow:begin' "$f") || return 0
   if ! grep -qxF "$END" "$f"; then warn "$f is missing $END, not removed (fix by hand)"; return; fi
   tmp=$(mktemp)
-  awk -v e="$END" 'skip && $0 == e { skip = 0; next } skip { next } /^<!-- dotfiles:begin/ { skip = 1; next } { print }' "$f" > "$tmp"
-  if [ "$tag" = '<!-- dotfiles:begin new -->' ] && [ ! -s "$tmp" ]; then
+  awk -v e="$END" 'skip && $0 == e { skip = 0; next } skip { next } /^<!-- dotfiles-frontend-workflow:begin/ { skip = 1; next } { print }' "$f" > "$tmp"
+  if [ "$tag" = '<!-- dotfiles-frontend-workflow:begin new -->' ] && [ ! -s "$tmp" ]; then
     rm "$f" "$tmp" && say unlink "$f"; return
   fi
-  if [ "$tag" = '<!-- dotfiles:begin nl -->' ]; then printf '%s' "$(cat "$tmp")" > "$f"; else cat "$tmp" > "$f"; fi \
+  if [ "$tag" = '<!-- dotfiles-frontend-workflow:begin nl -->' ]; then printf '%s' "$(cat "$tmp")" > "$f"; else cat "$tmp" > "$f"; fi \
     && say unlink "$f (import AGENTS.md)" || warn "could not write $f"
   rm -f "$tmp"
 }

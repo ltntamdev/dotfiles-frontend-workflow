@@ -57,12 +57,12 @@ for p in .codex/AGENTS.md .claude/agents/my-agent.md .claude/commands/qa.md; do
   ok "main: $p unchanged" '[ "$(entry "$AFTER" "$p")" = "$(entry "$BEFORE" "$p")" ]'
 done
 ok "main: CLAUDE.md keeps its first line" '[ "$(head -1 "$H/.claude/CLAUDE.md")" = "# mine" ]'
-ok "main: import block on its own line" 'sed -n 2p "$H/.claude/CLAUDE.md" | grep -q "^<!-- dotfiles:begin"'
+ok "main: import block on its own line" 'sed -n 2p "$H/.claude/CLAUDE.md" | grep -q "^<!-- dotfiles-frontend-workflow:begin"'
 ok "main: import line has no repo path (space-safe)" 'grep -qxF "@~/.claude/AGENTS.md" "$H/.claude/CLAUDE.md"'
 ok "main: ~/.claude/AGENTS.md link" '[ "$(readlink "$H/.claude/AGENTS.md")" = "$R/AGENTS.md" ]'
 
 run "$H"
-ok "main: second run adds no duplicate" '[ "$(grep -c "dotfiles:begin" "$H/.claude/CLAUDE.md")" = 1 ]'
+ok "main: second run adds no duplicate" '[ "$(grep -c "dotfiles-frontend-workflow:begin" "$H/.claude/CLAUDE.md")" = 1 ]'
 
 run "$H" --uninstall
 ok "main: uninstall restores the pre-install state" '[ "$(snap "$H")" = "$BEFORE" ]'
@@ -73,14 +73,14 @@ mkdir -p "$H/.claude"
 BEFORE=$(snap "$H")
 run "$H"
 ok "fresh: exit 0" '[ "$(cat "$T/rc")" = 0 ]'
-ok "fresh: CLAUDE.md holds only the import block" '[ "$(grep -vc "dotfiles:" "$H/.claude/CLAUDE.md")" = 1 ] && grep -qxF "@~/.claude/AGENTS.md" "$H/.claude/CLAUDE.md"'
+ok "fresh: CLAUDE.md holds only the import block" '[ "$(grep -vc "dotfiles-frontend-workflow:" "$H/.claude/CLAUDE.md")" = 1 ] && grep -qxF "@~/.claude/AGENTS.md" "$H/.claude/CLAUDE.md"'
 run "$H" --uninstall
 ok "fresh: uninstall restores the pre-install state" '[ "$(snap "$H")" = "$BEFORE" ]'
 
 # --- case_broken_marker: user deleted the end marker
 H="$T/broken"
 mkdir -p "$H/.claude"
-printf 'a\n<!-- dotfiles:begin -->\n@x\nb\n' > "$H/.claude/CLAUDE.md"
+printf 'a\n<!-- dotfiles-frontend-workflow:begin -->\n@x\nb\n' > "$H/.claude/CLAUDE.md"
 BEFORE=$(snap "$H")
 run "$H" --uninstall
 ok "broken: CLAUDE.md untouched" '[ "$(snap "$H")" = "$BEFORE" ]'

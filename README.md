@@ -1,6 +1,6 @@
-# dotfiles-frontend-workflow — shared rules for AI coding agents
+# dotfiles-frontend-workflow-frontend-workflow — shared rules for AI coding agents
 
-> Not shell/editor dotfiles: user-level rules, sub-agents, and git guards for AI coding agents.
+> Not shell/editor dotfiles-frontend-workflow: user-level rules, sub-agents, and git guards for AI coding agents.
 
 One minimal `AGENTS.md` for Claude Code, Codex, Junie, Antigravity, and Grok, installed once per user via symlinks. Edit here, `git pull`, and every agent picks it up. Agent-facing files are in English to save tokens; agents reply in English by default.
 
@@ -21,10 +21,10 @@ The `claude/` extras are an example of a frontend workflow (Figma designs, TypeS
 ## Install
 
 ```bash
-git clone <repo> ~/dotfiles && bash ~/dotfiles/install.sh
+git clone <repo> ~/dotfiles-frontend-workflow && bash ~/dotfiles-frontend-workflow/install.sh
 ```
 
-Links `AGENTS.md` into `~/.codex/`, `~/.junie/`, `~/.gemini/`, `~/.grok/`, and `~/.claude/` (imported from `~/.claude/CLAUDE.md`), plus the `claude/` extras into `~/.claude/`. Agents that aren't installed are skipped. Existing files are never overwritten — they're reported as `warn:` (exit 1); move them aside and re-run. Safe to re-run; `bash ~/dotfiles/install.sh --uninstall` removes only what it added.
+Links `AGENTS.md` into `~/.codex/`, `~/.junie/`, `~/.gemini/`, `~/.grok/`, and `~/.claude/` (imported from `~/.claude/CLAUDE.md`), plus the `claude/` extras into `~/.claude/`. Agents that aren't installed are skipped. Existing files are never overwritten — they're reported as `warn:` (exit 1); move them aside and re-run. Safe to re-run; `bash ~/dotfiles-frontend-workflow/install.sh --uninstall` removes only what it added.
 
 ## Per project
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Checks dotfiles structure: core AGENTS.md, Claude extras, templates, install.sh, external references.
+# Checks dotfiles-frontend-workflow structure: core AGENTS.md, Claude extras, templates, install.sh, external references.
 # Usage: bash scripts/validate.sh [core|agents|agents-count|commands|refs-paths|templates|settings|install|refs|all]
 set -u
 cd "$(dirname "$0")/.."
