@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Blocks dangerous pushes (git safety, core AGENTS.md section 3):
+#   1. pushes to protected branches (default: master|main|develop)
+#   2. deleting remote branches/tags
+#   3. non-fast-forward pushes (force push), including existing tags
+# Per-project protected branches:  PROTECTED_BRANCHES='master|main|develop|release' git push
+# or edit PROTECTED_RE below after copying the hook into the project (.githooks/pre-push).
+# Note: client-side only; also enable branch protection on GitHub.
+set -u
+ZERO="0000000000000000000000000000000000000000"
+PROTECTED_RE="^refs/heads/(${PROTECTED_BRANCHES:-master|main|develop})$"
+fail() { echo "⛔ pre-push: $*" >&2; exit 1; }
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [[ "$remote_ref" =~ $PROTECTED_RE ]] && fail "pushing to '${remote_ref#refs/heads/}' is forbidden (protected/PROD branch)."
+  [[ "$local_sha" == "$ZERO" ]] && fail "deleting '$remote_ref' on the remote is forbidden."
+  if [[ "$remote_sha" != "$ZERO" ]]; then
+    git cat-file -e "${remote_sha}^{commit}" 2>/dev/null \
+      || fail "remote commit $remote_sha is not available locally (git fetch first); refusing because fast-forward cannot be proven."
+    git merge-base --is-ancestor "$remote_sha" "$local_sha" \
+      || fail "non-fast-forward push (force push) to '$remote_ref' is forbidden."
+  fi
+done
+exit 0
