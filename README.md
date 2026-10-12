@@ -1,4 +1,4 @@
-# dotfiles — shared rules for AI coding agents
+# dotfiles-frontend-workflow — shared rules for AI coding agents
 
 > Not shell/editor dotfiles: user-level rules, sub-agents, and git guards for AI coding agents.
 
