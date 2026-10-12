@@ -1,6 +1,6 @@
 # dotfiles — shared rules for AI coding agents
 
-> This is just my personal dotfiles.
+> Not shell/editor dotfiles: user-level rules, sub-agents, and git guards for AI coding agents.
 
 One minimal `AGENTS.md` for Claude Code, Codex, Junie, Antigravity, and Grok, installed once per user via symlinks. Edit here, `git pull`, and every agent picks it up. Agent-facing files are in English to save tokens; agents reply in English by default.
 
@@ -16,6 +16,8 @@ install.sh     install / uninstall symlinks
 scripts/       validate.sh, test-install.sh
 ```
 
+The `claude/` extras are an example of a frontend workflow (Figma designs, TypeScript, a frontend calling a backend API). Adapt or drop the agents and commands to fit yours.
+
 ## Install
 
 ```bash
@@ -27,14 +29,14 @@ Links `AGENTS.md` into `~/.codex/`, `~/.junie/`, `~/.gemini/`, `~/.grok/`, and `
 ## Per project
 
 - Copy `templates/project-AGENTS.md` to the project root as `AGENTS.md` and fill it in; it wins over the core on conflict. For Claude Code, the project `CLAUDE.md` is just `@AGENTS.md`.
-- Optional hard guards (other agents only get git safety as text): copy `templates/settings.json` to `.claude/settings.json` and `templates/pre-push` to `.githooks/pre-push`, run `git config core.hooksPath .githooks`, and enable GitHub branch protection.
+- Optional hard guards (other agents only get git safety as text): copy `templates/settings.json` to `.claude/settings.json` and `templates/pre-push` to `.githooks/pre-push`, run `git config core.hooksPath .githooks`, and enable GitHub branch protection. The deny list is strict on purpose (e.g. `git rebase`, `git branch -d`, `curl -X POST`); loosen it to suit your workflow.
 - Migrating from the old copy-based setup: delete the project's `.claude/rules/` and `.claude/agents/` (project agents shadow global ones).
 
 ## Verify
 
 - Claude Code: `/memory` shows `AGENTS.md`; `/agents` lists 9 agents.
 - Grok: `grok inspect` lists `~/.grok/AGENTS.md` (if not, rename the target to `CLAUDE.md`).
-- Codex / Junie / Antigravity: in a repo without `AGENTS.md`, ask for the git safety rules (Codex 0.77 skips the global file there — upgrade).
+- Codex / Junie / Antigravity: in a repo without `AGENTS.md`, ask for the git safety rules (older Codex versions skip the global file there — upgrade).
 - Repo: `bash scripts/validate.sh`.
 
 ## License
